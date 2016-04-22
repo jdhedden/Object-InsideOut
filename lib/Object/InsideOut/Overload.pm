@@ -83,7 +83,7 @@ sub generate_OVERLOAD :Sub(Private)
 
 
 # Ensure correct versioning
-($Object::InsideOut::VERSION == 3.52)
+($Object::InsideOut::VERSION == 3.57)
     or die("Version mismatch\n");
 
 # EOF

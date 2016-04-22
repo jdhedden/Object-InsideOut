@@ -5,12 +5,12 @@ require 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '3.52';
+our $VERSION = '3.57';
 $VERSION = eval $VERSION;
 
-use Object::InsideOut::Exception 3.52;
-use Object::InsideOut::Util 3.52 qw(create_object hash_re is_it make_shared);
-use Object::InsideOut::Metadata 3.52;
+use Object::InsideOut::Exception 3.57;
+use Object::InsideOut::Util 3.57 qw(create_object hash_re is_it make_shared);
+use Object::InsideOut::Metadata 3.57;
 
 require B;
 
@@ -100,6 +100,8 @@ if (! exists($GBL{'GBL_SET'})) {
             obj => make_shared({}),
             ok  => $threads::shared::threads_shared,
         },
+
+        # cache                 # Object initialization activity cache
     );
 
     # Add metadata
@@ -670,7 +672,7 @@ sub _ID :Sub
 
 ### Initialization Handling ###
 
-# Finds a subroutine's name from itsft(@{$$reuse{$tree}[$thread_id code ref
+# Finds a subroutine's name from its code ref
 sub sub_name :Sub(Private)
 {
     my ($ref, $attr, $location) = @_;
@@ -1352,7 +1354,7 @@ sub _args :Sub(Private)
     }
 
     # Check on what we've found
-    CHECK:
+    CHECKIT:
     foreach my $key (keys(%{$spec})) {
         my $spec_item = $$spec{$key};
         # No specs to check
@@ -1363,7 +1365,7 @@ sub _args :Sub(Private)
             if (! defined($found{$key})) {
                 delete($found{$key});
             }
-            next CHECK;
+            next CHECKIT;
         }
 
         # Preprocess the argument
@@ -1402,7 +1404,7 @@ sub _args :Sub(Private)
             # If no default, then remove it from the found args hash
             if (! defined($found{$key})) {
                 delete($found{$key});
-                next CHECK;
+                next CHECKIT;
             }
         }
 
@@ -1541,13 +1543,25 @@ sub new :MergeArgs
     # Create a new 'bare' object
     my $self = _obj($class);
 
+    # Object initialization activity caching
+    my $have_cache = exists($GBL{'cache'}{$class});
+    my %cache = ($have_cache) ? %{$GBL{'cache'}{$class}}
+                              : ( 'pre'  => 0, 'def'  => 0 );
+
     # Execute pre-initialization subroutines
-    my $preinit_subs = $GBL{'sub'}{'pre'};
-    if (%{$preinit_subs}) {
-        foreach my $pkg (@{$GBL{'tree'}{'bu'}{$class}}) {
-            if (my $preinit = $$preinit_subs{$pkg}) {
-                local $SIG{'__DIE__'} = 'OIO::trap';
-                $self->$preinit($all_args);
+    if ($cache{'pre'} || ! $have_cache) {
+        my $preinit_subs = $GBL{'sub'}{'pre'};
+        if (%{$preinit_subs}) {
+            foreach my $pkg (@{$GBL{'tree'}{'bu'}{$class}}) {
+                if (my $preinit = $$preinit_subs{$pkg}) {
+                    local $SIG{'__DIE__'} = 'OIO::trap';
+                    $self->$preinit($all_args);
+                    if ($have_cache) {
+                        last if (! (--$cache{'pre'}));
+                    } else {
+                        $cache{'pre'}++;
+                    }
+                }
             }
         }
     }
@@ -1555,10 +1569,17 @@ sub new :MergeArgs
     my $tree = $GBL{'tree'}{'td'}{$class};
 
     # Set any defaults
-    foreach my $pkg (@{$tree}) {
-        if (my $def = $GBL{'fld'}{'def'}{$pkg}) {
-            $self->set($_->[0], Object::InsideOut::Util::clone($_->[1]))
-                foreach (@{$def});
+    if ($cache{'def'} || ! $have_cache) {
+        foreach my $pkg (@{$tree}) {
+            if (my $def = $GBL{'fld'}{'def'}{$pkg}) {
+                $self->set($_->[0], Object::InsideOut::Util::clone($_->[1]))
+                    foreach (@{$def});
+                if ($have_cache) {
+                    last if (! (--$cache{'def'}));
+                } else {
+                    $cache{'def'}++;
+                }
+            }
         }
     }
 
@@ -1622,6 +1643,11 @@ sub new :MergeArgs
                 }
             }
         }
+    }
+
+    # Remember object initialization activity caching
+    if (! $have_cache) {
+        $GBL{'cache'}{$class} = \%cache;
     }
 
     # Done - return object
@@ -1898,14 +1924,19 @@ sub DESTROY
 # OIO specific ->can()
 sub can :Method(Object)
 {
+    my ($thing, $method) = @_;
+
+    return if (! defined($thing));
+
     # Metadata call for methods
     if (@_ == 1) {
-        my $meths = Object::InsideOut::meta(shift)->get_methods();
+        my $meths = Object::InsideOut::meta($thing)->get_methods();
         return (wantarray()) ? (keys(%$meths)) : [ keys(%$meths) ];
     }
 
+    return if (! defined($method));
+
     # Try UNIVERSAL::can()
-    my ($thing, $method) = @_;
     eval { $thing->Object::InsideOut::SUPER::can($method) };
 }
 
@@ -1913,12 +1944,14 @@ sub can :Method(Object)
 # OIO specific ->isa()
 sub isa :Method(Object)
 {
+    my ($thing, $type) = @_;
+
+    return ('') if (! defined($thing));
+
     # Metadata call for classes
     if (@_ == 1) {
-        return Object::InsideOut::meta(shift)->get_classes();
+        return Object::InsideOut::meta($thing)->get_classes();
     }
-
-    my ($thing, $type) = @_;
 
     # Workaround for Perl bug #47233
     return ('') if (! defined($type));
@@ -1947,7 +1980,14 @@ sub STORABLE_thaw :Sub
     }
 
     # Recreate the object
-    my $self = Object::InsideOut->pump($data);
+    my $self;
+    eval {
+        $self = Object::InsideOut->pump($data);
+    };
+    if ($@) {
+        die($@->as_string());   # Storable doesn't like exception objects
+    }
+
     # Transfer the ID to Storable's object
     $$obj = $$self;
     # Make object shared, if applicable
