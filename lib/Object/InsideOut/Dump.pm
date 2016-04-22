@@ -206,7 +206,7 @@ sub dump
 
 
 # Ensure correct versioning
-($Object::InsideOut::VERSION eq '3.99')
+($Object::InsideOut::VERSION eq '4.01')
     or die("Version mismatch\n");
 
 # EOF
