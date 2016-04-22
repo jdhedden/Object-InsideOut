@@ -5,12 +5,12 @@ require 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '3.64';
+our $VERSION = '3.74';
 $VERSION = eval $VERSION;
 
-use Object::InsideOut::Exception 3.64;
-use Object::InsideOut::Util 3.64 qw(create_object hash_re is_it make_shared);
-use Object::InsideOut::Metadata 3.64;
+use Object::InsideOut::Exception 3.74;
+use Object::InsideOut::Util 3.74 qw(create_object hash_re is_it make_shared);
+use Object::InsideOut::Metadata 3.74;
 
 require B;
 
@@ -46,8 +46,8 @@ if (! exists($GBL{'GBL_SET'})) {
         },
 
         id => {
-            obj   => make_shared({}),  # Object IDs
-            reuse => make_shared({}),  # Reclaimed obj IDs
+            obj   => {},        # Object IDs
+            reuse => {},        # Reclaimed obj IDs
         },
 
         fld => {
@@ -628,44 +628,57 @@ sub _ID :Sub
     my ($class, $id) = @_;            # The object's class and id
     my $tree = $GBL{'sub'}{'id'}{$class}{'pkg'};
 
+
     # If class is sharing, then all ID tracking is done as though in thread 0,
     # else tracking is done per thread
-    my $thread_id = (is_sharing($class)) ? 0 : $GBL{'tid'};
+    my $sharing = is_sharing($class);
+    my $thread_id = ($sharing) ? 0 : $GBL{'tid'};
 
     # Save deleted IDs for later reuse
     my $reuse = $GBL{'id'}{'reuse'};
     if ($id) {
-        lock($reuse) if $GBL{'share'}{'ok'};
         if (! exists($$reuse{$tree})) {
-            $$reuse{$tree} = make_shared([]);
+            $$reuse{$tree} = ($sharing) ? make_shared([]) : [];
         }
+        lock($$reuse{$tree}) if $sharing;
         my $r_tree = $$reuse{$tree};
         if (! exists($$r_tree[$thread_id])) {
-            $$r_tree[$thread_id] = make_shared({});
-        } elsif (exists($$r_tree[$thread_id]{$id})) {
-            warn("ERROR: Duplicate reclaimed object ID ($id) in class tree for $tree in thread $thread_id\n");
-            return;
+            $$r_tree[$thread_id] = ($sharing) ? make_shared([]) : [];
+        } else {
+            foreach  (@{$$r_tree[$thread_id]}) {
+                if ($_ == $id) {
+                    warn("ERROR: Duplicate reclaimed object ID ($id) in class tree for $tree in thread $thread_id\n");
+                    return;
+                }
+            }
         }
-        $$r_tree[$thread_id]{$id} = $id;
+        push(@{$$r_tree[$thread_id]}, $id);
         return;
     }
 
     # Use a reclaimed ID if available
-    if (exists($$reuse{$tree}) &&
-        exists($$reuse{$tree}[$thread_id]))
-    {
-        keys(%{$$reuse{$tree}[$thread_id]});
-        if ((my $id) = each(%{$$reuse{$tree}[$thread_id]})) {
-            return (delete($$reuse{$tree}[$thread_id]{$id}));
+    if (exists($$reuse{$tree})) {
+        lock($$reuse{$tree}) if $sharing;
+        if (exists($$reuse{$tree}[$thread_id])) {
+            my $id = pop(@{$$reuse{$tree}[$thread_id]});
+            if (defined($id)) {
+                return $id;
+            }
         }
     }
 
     # Return the next ID
     my $g_id = $GBL{'id'}{'obj'};
-    lock($g_id) if $GBL{'share'}{'ok'};
-    if (! exists($$g_id{$tree})) {
-        $$g_id{$tree} = make_shared([]);
+    if (exists($$g_id{$tree})) {
+        lock($$g_id{$tree}) if $sharing;
+        return (++$$g_id{$tree}[$thread_id]);
     }
+    if ($sharing) {
+        $$g_id{$tree} = make_shared([]);
+        lock($$g_id{$tree});
+        return (++$$g_id{$tree}[$thread_id]);
+    }
+    $$g_id{$tree} = [];
     return (++$$g_id{$tree}[$thread_id]);
 }
 
@@ -822,6 +835,17 @@ sub initialize :Sub(Private)
                         }
                     }
                 }
+            }
+            # Set up for obj ID sequences for shared classes using _ID
+            if (exists($$id_subs{$flag_class}) &&
+                ($$id_subs{$flag_class}{'code'} == \&_ID))
+            {
+                my $share_tree = $$id_subs{$flag_class}{'pkg'};
+                if (! exists($$obj_ids{$share_tree})) {
+                    $$obj_ids{$share_tree} = make_shared([]);
+                    $$obj_ids{$share_tree}[0] = 0;
+                }
+
             }
         }
 
@@ -1222,6 +1246,13 @@ sub CLONE
                 # Objects using internal ID sub keep their same ID
                 $obj = $$obj_cl{$old_id};
 
+                # Set 'next object ID'
+                my $pkg = $GBL{'sub'}{'id'}{$class}{'pkg'};
+                my $g_id = $GBL{'id'}{'obj'}{$pkg};
+                if (! $$g_id[$tid] || ($$g_id[$tid] < $$obj)) {
+                    $$g_id[$tid] = $$obj;
+                }
+
             } else {
                 # Get cloned object associated with old ID
                 $obj = delete($$obj_cl{$old_id});
@@ -1617,7 +1648,7 @@ sub new :MergeArgs
         } elsif (exists($pkg_args{$pkg})) {
             if (%{$pkg_args{$pkg}}) {
                 # It's an error if there are unhandled args, but no :Init sub
-                OIO::Args->die(
+                OIO::Args::Unhandled->die(
                     'message' => "Unhandled parameter for class '$class': " . join(', ', keys(%{$pkg_args{$pkg}})),
                     'Usage'   => q/Add appropriate 'Field =>' designators to the :InitArgs hash/);
             }
@@ -1629,7 +1660,7 @@ sub new :MergeArgs
                     'message' => "Bad class initializer for '$class'",
                     'Usage'   => q/Class initializers must be a hash ref/);
             }
-            OIO::Args->die(
+            OIO::Args::Unhandled->die(
                 'message' => "Unhandled parameter for class '$class': " . join(', ', keys(%{$$all_args{$pkg}})),
                 'Usage'   => q/Add :Init subroutine or :InitArgs hash/);
         }
@@ -1643,12 +1674,12 @@ sub new :MergeArgs
             if (exists($pkgs{$key})) {
                 foreach my $subkey (keys(%{$$all_args{$key}})) {
                     if (! exists($$used_args{$key}{$subkey})) {
-                        OIO::Args->die('message' => "Unhandled parameter for class '$key': $subkey");
+                        OIO::Args::Unhandled->die('message' => "Unhandled parameter for class '$key': $subkey");
                     }
                 }
             } else {
                 if (! exists($$used_args{$key})) {
-                    OIO::Args->die('message' => "Unhandled parameter: $key");
+                    OIO::Args::Unhandled->die('message' => "Unhandled parameter: $key");
                 }
             }
         }

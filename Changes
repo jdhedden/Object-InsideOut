@@ -1,5 +1,33 @@
 Revision history for Perl extension Object::InsideOut.
 
+3.74 Tue Nov  9 02:16:45 2010
+	- threads::shared version number in test
+
+3.73 Mon Nov  8 18:53:00 2010
+	- Fix obj ID handling for shared objects in threaded app
+
+3.72 Mon Oct 18 21:15:53 2010
+	- Fix obj ID handling for non-shared objects in threaded app
+
+3.71 Wed Oct 13 18:25:20 2010
+	- Fixed a memory leak
+
+3.69 Tue Sep 28 20:38:53 2010
+	- Fix test counts in t/27-exception.t
+
+3.68 Thu Sep 23 17:09:21 2010
+	- POD note to 'use threads' in DBI applications [bug #58394]
+	- Allow warnings for unhandled args
+
+3.67 Mon May 17 23:22:44 2010
+	- More fixes for $@ changes
+
+3.66 Fri May 14 13:31:04 2010
+	- More fixes for $@ changes
+
+3.65 Fri May  7 19:05:34 2010
+	- Fix tests for $@ changes that will be coming with Perl 5.14
+
 3.64 Mon Mar  8 17:59:51 2010
 	- Added tests related to shared object destruction
 
