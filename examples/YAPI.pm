@@ -2,7 +2,7 @@ package Term::YAPI; {
     use strict;
     use warnings;
 
-    our $VERSION = '3.25';
+    our $VERSION = '3.26';
 
     #####
     #
@@ -21,7 +21,7 @@ package Term::YAPI; {
         $threaded_okay = !$@;
     }
 
-    use Object::InsideOut 3.25;
+    use Object::InsideOut 3.26;
 
     # Default progress indicator is a twirling bar
     my @yapi :Field
@@ -222,7 +222,7 @@ package Term::YAPI; {
             my $step = $step[$$self]++;
             my $max  = scalar(@{$yapi});
             print(_undo($type, $yapi, $step,   $max, 0) .
-                  _step($type, $yapi, $step+1, $max))
+                  _prog($type, $yapi, $step+1, $max))
         } else {
             # Not running, or some other indicator is running.
             # Therefore, start this indicator.
@@ -507,7 +507,7 @@ not cause an error, but will only display 'wait...'.
 =head1 SEE ALSO
 
 Annotated POD for Term::YAPI:
-L<http://annocpan.org/~JDHEDDEN/Object-InsideOut-3.25/examples/YAPI.pm>
+L<http://annocpan.org/~JDHEDDEN/Object-InsideOut-3.26/examples/YAPI.pm>
 
 L<Object::InsideOut>, L<threads>, L<Thread::Queue>
 
