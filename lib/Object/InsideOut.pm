@@ -5,12 +5,12 @@ require 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '4.01';
+our $VERSION = '4.02';
 $VERSION = eval $VERSION;
 
-use Object::InsideOut::Exception 4.01;
-use Object::InsideOut::Util 4.01 qw(create_object hash_re is_it make_shared);
-use Object::InsideOut::Metadata 4.01;
+use Object::InsideOut::Exception 4.02;
+use Object::InsideOut::Util 4.02 qw(create_object hash_re is_it make_shared);
+use Object::InsideOut::Metadata 4.02;
 
 require B;
 
@@ -2780,7 +2780,6 @@ _PRE_
         }
     }
 
-    print($code);
     # Compile the subroutine(s) in the smallest possible lexical scope
     my @errs;
     local $SIG{'__WARN__'} = sub { push(@errs, @_); };
