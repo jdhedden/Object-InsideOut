@@ -2,7 +2,7 @@ package Bundle::Object::InsideOut;
 
 use strict;
 
-our $VERSION = '3.24';
+our $VERSION = '3.25';
 $VERSION = eval $VERSION;
 
 1;
@@ -37,7 +37,7 @@ File::Spec 3.25                 - Used by Pod::Parser
 
 Pod::Parser 1.35                - Used by Pod::Coverage
 
-Pod::Coverage 0.18              - Used by Test::Pod::Coverage
+Pod::Coverage 0.19              - Used by Test::Pod::Coverage
 
 Test::Pod::Coverage 1.08        - Tests POD coverage
 
@@ -55,7 +55,7 @@ Class::Data::Inheritable 0.06   - Used by Exception::Class
 
 Exception::Class 1.23           - Error handling
 
-Object::InsideOut 3.24          - Inside-out object support
+Object::InsideOut 3.25          - Inside-out object support
 
 URI 1.35                        - Used by LWP::UserAgent
 
