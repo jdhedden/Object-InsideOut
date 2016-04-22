@@ -3,7 +3,7 @@ package Bundle::Object::InsideOut;
 use strict;
 use warnings;
 
-our $VERSION = '3.98';
+our $VERSION = '3.99';
 $VERSION = eval $VERSION;
 
 1;
@@ -20,55 +20,55 @@ Bundle::Object::InsideOut - A bundle of modules for full Object::InsideOut suppo
 
 =head1 CONTENTS
 
-Test::Harness 3.28              - Used for module testing
+Test::Harness 3.35              - Used for module testing
 
-Test::Simple 0.98               - Used for module testing
+Test::Simple 1.001014           - Used for module testing
 
-Scalar::Util 1.32               - Used by Object::InsideOut
+Scalar::Util 1.42               - Used by Object::InsideOut
 
-Pod::Escapes 1.04               - Used by Pod::Simple
+Pod::Escapes 1.07               - Used by Pod::Simple
 
-Pod::Simple 3.28                - Used by Test::Pod
+Pod::Simple 3.30                - Used by Test::Pod
 
-Test::Pod 1.48                  - Checks POD syntax
+Test::Pod 1.51                  - Checks POD syntax
 
-Devel::Symdump 2.10             - Used by Pod::Coverage
+Devel::Symdump 2.15             - Used by Pod::Coverage
 
-File::Spec 3.40                 - Used by Pod::Parser
+File::Spec 3.47                 - Used by Pod::Parser
 
-Pod::Parser 1.61                - Used by Pod::Coverage
+Pod::Parser 1.63                - Used by Pod::Coverage
 
 Pod::Coverage 0.23              - Used by Test::Pod::Coverage
 
-Test::Pod::Coverage 1.08        - Tests POD coverage
+Test::Pod::Coverage 1.10        - Tests POD coverage
 
-threads 1.89                    - Support for threads
+threads 2.02                    - Support for threads
 
-threads::shared 1.43            - Support for sharing objects between threads
+threads::shared 1.48            - Support for sharing objects between threads
 
-Want 0.21                       - :lvalue accessor support
+Want 0.25                       - :lvalue accessor support
 
-Data::Dumper 2.145              - Object serialization support
+Data::Dumper 2.154              - Object serialization support
 
-Storable 2.45                   - Object serialization support
+Storable 2.51                   - Object serialization support
 
-Devel::StackTrace 1.30          - Used by Exception::Class
+Devel::StackTrace 2.00          - Used by Exception::Class
 
 Class::Data::Inheritable 0.08   - Used by Exception::Class
 
-Exception::Class 1.37           - Error handling
+Exception::Class 1.39           - Error handling
 
-Object::InsideOut 3.98          - Inside-out object support
+Object::InsideOut 3.99          - Inside-out object support
 
-URI 1.60                        - Used by LWP::UserAgent
+URI 1.69                        - Used by LWP::UserAgent
 
 HTML::Tagset 3.20               - Used by LWP::UserAgent
 
 HTML::Parser 3.71               - Used by LWP::UserAgent
 
-LWP::UserAgent 6.05             - Used by Math::Random::MT::Auto
+LWP::UserAgent 6.13             - Used by Math::Random::MT::Auto
 
-Win32::API 0.75                 - Used by Math::Random::MT::Auto (Win XP only)
+Win32::API 0.82                 - Used by Math::Random::MT::Auto (Win XP only)
 
 Math::Random::MT::Auto 6.22     - Support for :SECURE mode
 

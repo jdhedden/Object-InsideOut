@@ -5,12 +5,12 @@ require 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '3.98';
+our $VERSION = '3.99';
 $VERSION = eval $VERSION;
 
-use Object::InsideOut::Exception 3.98;
-use Object::InsideOut::Util 3.98 qw(create_object hash_re is_it make_shared);
-use Object::InsideOut::Metadata 3.98;
+use Object::InsideOut::Exception 3.99;
+use Object::InsideOut::Util 3.99 qw(create_object hash_re is_it make_shared);
+use Object::InsideOut::Metadata 3.99;
 
 require B;
 
@@ -2780,6 +2780,7 @@ _PRE_
         }
     }
 
+    print($code);
     # Compile the subroutine(s) in the smallest possible lexical scope
     my @errs;
     local $SIG{'__WARN__'} = sub { push(@errs, @_); };
@@ -2953,7 +2954,7 @@ _REF_
     if ($subtype) {
         if ($subtype =~ /^scalar$/i) {
             $code .= <<"_SCALAR_SUBTYPE_";
-    foreach my \$elem (\@{\$arg}) {
+    foreach my \$elem (\@{$arg_str}) {
         if (ref(\$elem)) {
             OIO::Args->die(
                 'message'  => q/Bad argument: Wrong type/,
@@ -2964,7 +2965,7 @@ _REF_
 _SCALAR_SUBTYPE_
         } elsif ($subtype =~ /^num(?:ber|eric)?$/i) {
             $code .= <<"_NUM_SUBTYPE_";
-    foreach my \$elem (\@{\$arg}) {
+    foreach my \$elem (\@{$arg_str}) {
         if (! Scalar::Util::looks_like_number(\$elem)) {
             OIO::Args->die(
                 'message'  => q/Bad argument: Wrong type/,
@@ -2975,7 +2976,7 @@ _SCALAR_SUBTYPE_
 _NUM_SUBTYPE_
         } else {
             $code .= <<"_SUBTYPE_";
-    foreach my \$elem (\@{\$arg}) {
+    foreach my \$elem (\@{$arg_str}) {
         if (! Object::InsideOut::Util::is_it(\$elem, '$subtype')) {
             OIO::Args->die(
                 'message'  => q/Bad argument: Wrong type/,

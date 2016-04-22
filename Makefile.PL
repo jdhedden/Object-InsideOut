@@ -10,19 +10,15 @@ use ExtUtils::MakeMaker;
 
 # Check for Scalar::Util::weaken()
 eval { require Scalar::Util; };
-if ($@) {
-    # Not found - require minimum version
-    $Scalar::Util::VERSION = 1.23;
-} elsif (! Scalar::Util->can('weaken')) {
-    # Scalar::Util is 'pure Perl' version
-    if ($Scalar::Util::VERSION ge '1.20') {
-        die <<_NO_WEAKEN_;
+if (! $@ &&
+    ! Scalar::Util->can('weaken') &&
+    $Scalar::Util::VERSION ge '1.20')
+{
+    die <<_NO_WEAKEN_;
 You must reinstall Scalar::Util in order to install Object::InsideOut
 because the currently installed Scalar::Util is a 'pure perl' version
 that is missing the 'weaken()' function.
 _NO_WEAKEN_
-    }
-    $Scalar::Util::VERSION = 1.23;
 }
 
 
@@ -89,7 +85,7 @@ WriteMakefile(
                          'Config'           => 0,
                          'B'                => 0,
                          'Data::Dumper'     => 2.131,
-                         'Scalar::Util'     => $Scalar::Util::VERSION,
+                         'Scalar::Util'     => 1.23,
                          'Exception::Class' => 1.32,
                          'Test::More'       => 0.98,
                        },
@@ -120,8 +116,8 @@ sub postamble
 {
     return <<'_EXTRAS_';
 fixfiles:
-	@dos2unix `cat MANIFEST`
-	@$(CHMOD) 644 `cat MANIFEST`
+	@dos2unix `cat MANIFEST | grep -v META`
+	@$(CHMOD) 644 `cat MANIFEST | grep -v META`
 
 yapi:
 	$(NOECHO) $(ABSPERLRUN) -MExtUtils::Install -e 'pm_to_blib({@ARGV}, '\''$(INST_LIB)/auto'\'', '\''$(PM_FILTER)'\'')' -- \

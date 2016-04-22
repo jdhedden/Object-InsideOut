@@ -1,5 +1,8 @@
 Revision history for Perl extension Object::InsideOut.
 
+3.99 Sat Aug 22 00:35:03 2015
+	- Fix array_ref subtype checking on assignment
+
 3.98 Thu Oct  3 19:04:26 2013
 	- User string compare for version checks
 

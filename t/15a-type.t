@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More 'tests' => 30;
+use Test::More 'tests' => 32;
 
 package My::Class; {
     use Object::InsideOut;
@@ -63,12 +63,13 @@ package Foo; {
     use Object::InsideOut;
 
     my @foo :Field :Acc(foo);
+    my @array_of_num  :Field :All(array_of_num) :Type( ARRAY_ref(numeric) );
 
     my %init_args :InitArgs = (
         'FOO' => {
             'field' => \@foo,
             'type' => 'ARRAYref(UNIVERSAL)'
-        }
+        },
     );
 }
 
@@ -154,6 +155,10 @@ MAIN:
     my $foo = Foo->new();
     my $foo2 = Foo->new('FOO' => [ $foo, $obj ]);
     is_deeply($foo2->foo(), [ $foo, $obj ]      => 'InitArgs type arrayref(UNIV)');
+    my $foo3 = Foo->new('array_of_num' => [ 1957, 42, 3.14 ]);
+    is_deeply($foo3->array_of_num(), [ 1957, 42, 3.14 ]  => 'InitArgs type arrayref(numeric)');
+    $foo3->array_of_num( [1,2,3] );
+    is_deeply($foo3->array_of_num(), [ 1, 2, 3 ]  => 'Set arrayref(numeric)');
 }
 
 exit(0);
