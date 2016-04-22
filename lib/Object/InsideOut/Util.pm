@@ -6,10 +6,10 @@ use strict;
 use warnings;
 
 BEGIN {
-    our $VERSION = 3.02;
+    our $VERSION = 3.03;
 }
 
-use Object::InsideOut::Metadata 3.02;
+use Object::InsideOut::Metadata 3.03;
 
 ### Module Initialization ###
 
