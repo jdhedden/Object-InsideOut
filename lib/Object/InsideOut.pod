@@ -3570,8 +3570,11 @@ needed for full support of all of the features provided by Object::InsideOut.
 
 =head1 SEE ALSO
 
-Object::InsideOut Discussion Forum on CPAN:
-L<http://www.cpanforum.com/dist/Object-InsideOut>
+L<Object::InsideOut> on MetaCPAN:
+L<https://metacpan.org/release/Object-InsideOut>
+
+Code repository:
+L<https://github.com/jdhedden/Object-InsideOut>
 
 Inside-out Object Model:
 L<http://www.perlfoundation.org/perl5/index.cgi?inside_out_object>,
@@ -3584,6 +3587,8 @@ L<Object::InsideOut::Metadata>
 
 L<Storable>, L<Exception:Class>, L<Want>, L<Math::Random::MT::Auto>,
 L<attributes>, L<overload>
+
+Sample code in the I<examples> directory of this distribution on CPAN.
 
 =head1 ACKNOWLEDGEMENTS
 
