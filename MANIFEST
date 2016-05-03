@@ -99,5 +99,3 @@ t/Req1.pm
 t/Req2.pm
 t/Req3.pm
 examples/YAPI.pm
-META.yml                                 Module YAML meta-data (added by MakeMaker)
-META.json                                Module JSON meta-data (added by MakeMaker)
