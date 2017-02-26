@@ -6,8 +6,9 @@ use Test::More 'tests' => 7;
 package main;
 MAIN:
 {
-    use t::Imp1;
-    use t::Imp2;
+    use lib 't';
+    use Imp1;
+    use Imp2;
 
     is_deeply( \@main::ISA, [], 
             '@main::ISA result=' . join(', ', @main::ISA));

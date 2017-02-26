@@ -86,7 +86,7 @@ SKIP: {
 
 SKIP: {
     if (! eval 'use Test::Spelling; 1') {
-        skip('Test::Spelling required for testing POD spelling', 1);
+        skip('Test::Spelling required for testing POD spelling', 4);
     }
     if (system('aspell help >/dev/null 2>&1')) {
         skip("'aspell' required for testing POD spelling", 1);
@@ -177,4 +177,6 @@ Hashify
 Numerify
 PreInit
 YAPI
+
+MetaCPAN
 __END__

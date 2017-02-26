@@ -3,6 +3,8 @@ use warnings;
 
 use Test::More 'tests' => 10;
 
+use lib '.';
+
 package t::ErrorParent::Child; {
     eval "use Object::InsideOut qw(t::ErrorParent);";
     Test::More::ok($@, 'Correctly fails on syntax error in parent');

@@ -116,8 +116,8 @@ sub postamble
 {
     return <<'_EXTRAS_';
 fixfiles:
-	@dos2unix `cat MANIFEST | grep -v META`
-	@$(CHMOD) 644 `cat MANIFEST | grep -v META`
+	@dos2unix `cat MANIFEST`
+	@$(CHMOD) 644 `cat MANIFEST`
 
 yapi:
 	$(NOECHO) $(ABSPERLRUN) -MExtUtils::Install -e 'pm_to_blib({@ARGV}, '\''$(INST_LIB)/auto'\'', '\''$(PM_FILTER)'\'')' -- \

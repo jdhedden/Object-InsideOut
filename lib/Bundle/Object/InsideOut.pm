@@ -3,7 +3,7 @@ package Bundle::Object::InsideOut;
 use strict;
 use warnings;
 
-our $VERSION = '4.02';
+our $VERSION = '4.03';
 $VERSION = eval $VERSION;
 
 1;
@@ -20,21 +20,21 @@ Bundle::Object::InsideOut - A bundle of modules for full Object::InsideOut suppo
 
 =head1 CONTENTS
 
-Test::Harness 3.35              - Used for module testing
+Test::Harness 3.36              - Used for module testing
 
-Test::Simple 1.001014           - Used for module testing
+Test::Simple 1.302059           - Used for module testing
 
-Scalar::Util 1.42               - Used by Object::InsideOut
+Scalar::Util 1.47               - Used by Object::InsideOut
 
 Pod::Escapes 1.07               - Used by Pod::Simple
 
-Pod::Simple 3.30                - Used by Test::Pod
+Pod::Simple 3.35                - Used by Test::Pod
 
 Test::Pod 1.51                  - Checks POD syntax
 
-Devel::Symdump 2.15             - Used by Pod::Coverage
+Devel::Symdump 2.18             - Used by Pod::Coverage
 
-File::Spec 3.47                 - Used by Pod::Parser
+File::Spec 3.63                 - Used by Pod::Parser
 
 Pod::Parser 1.63                - Used by Pod::Coverage
 
@@ -42,31 +42,31 @@ Pod::Coverage 0.23              - Used by Test::Pod::Coverage
 
 Test::Pod::Coverage 1.10        - Tests POD coverage
 
-threads 2.02                    - Support for threads
+threads 2.12                    - Support for threads
 
-threads::shared 1.48            - Support for sharing objects between threads
+threads::shared 1.54            - Support for sharing objects between threads
 
-Want 0.25                       - :lvalue accessor support
+Want 0.29                       - :lvalue accessor support
 
-Data::Dumper 2.154              - Object serialization support
+Data::Dumper 2.161              - Object serialization support
 
-Storable 2.51                   - Object serialization support
+Storable 2.56                   - Object serialization support
 
-Devel::StackTrace 2.00          - Used by Exception::Class
+Devel::StackTrace 2.02          - Used by Exception::Class
 
 Class::Data::Inheritable 0.08   - Used by Exception::Class
 
-Exception::Class 1.39           - Error handling
+Exception::Class 1.42           - Error handling
 
-Object::InsideOut 4.02          - Inside-out object support
+Object::InsideOut 4.03          - Inside-out object support
 
-URI 1.69                        - Used by LWP::UserAgent
+URI 1.71                        - Used by LWP::UserAgent
 
 HTML::Tagset 3.20               - Used by LWP::UserAgent
 
-HTML::Parser 3.71               - Used by LWP::UserAgent
+HTML::Parser 3.72               - Used by LWP::UserAgent
 
-LWP::UserAgent 6.13             - Used by Math::Random::MT::Auto
+LWP::UserAgent 6.21             - Used by Math::Random::MT::Auto
 
 Win32::API 0.82                 - Used by Math::Random::MT::Auto (Win XP only)
 

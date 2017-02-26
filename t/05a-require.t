@@ -4,7 +4,8 @@ use warnings;
 use Test::More 'tests' => 24;
 
 eval {
-    require "t/05a-require.pm";
+    use lib 't';
+    require '05a-require.pm';
 };
 ok(! $@, 'require ' . $@);
 
