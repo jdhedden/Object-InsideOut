@@ -42,7 +42,7 @@ Pod::Coverage 0.23              - Used by Test::Pod::Coverage
 
 Test::Pod::Coverage 1.10        - Tests POD coverage
 
-threads 2.14                    - Support for threads
+threads 2.15                    - Support for threads
 
 threads::shared 1.55            - Support for sharing objects between threads
 
