@@ -5,12 +5,12 @@ require 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '4.02';
+our $VERSION = '4.03';
 $VERSION = eval $VERSION;
 
-use Object::InsideOut::Exception 4.02;
-use Object::InsideOut::Util 4.02 qw(create_object hash_re is_it make_shared);
-use Object::InsideOut::Metadata 4.02;
+use Object::InsideOut::Exception 4.03;
+use Object::InsideOut::Util 4.03 qw(create_object hash_re is_it make_shared);
+use Object::InsideOut::Metadata 4.03;
 
 require B;
 
@@ -1126,7 +1126,7 @@ sub process_fields :Sub(Private)
             }
 
             # Share the field, if applicable
-            if (is_sharing($pkg) && !threads::shared::_id($fld)) {
+            if (is_sharing($pkg) && !threads::shared::is_shared($fld)) {
                 # Preserve any contents
                 my $contents = Object::InsideOut::Util::clone_shared($fld);
 
@@ -1895,7 +1895,7 @@ sub set
     }
 
     # Handle sharing
-    if ($GBL{'share'}{'ok'} && threads::shared::_id($field)) {
+    if ($GBL{'share'}{'ok'} && threads::shared::is_shared($field)) {
         lock($field);
         if ($fld_type eq 'HASH') {
             $$field{$$self} = make_shared($data);
@@ -1963,7 +1963,7 @@ sub DESTROY
             } elsif (exists($GBL{'share'}{'obj'})) {
                 my $so_cl = $GBL{'share'}{'obj'}{$class};
                 if (! exists($$so_cl{$$self})) {
-                    # This can happen when an non-shared object
+                    # This can happen when a non-shared object
                     #   is returned from a thread
                     warn("ERROR: Attempt to DESTROY object ID $$self of class $class in thread ID $tid twice\n");
                     return;

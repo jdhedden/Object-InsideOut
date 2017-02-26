@@ -5,10 +5,10 @@ require 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '4.02';
+our $VERSION = '4.03';
 $VERSION = eval $VERSION;
 
-use Object::InsideOut::Metadata 4.02;
+use Object::InsideOut::Metadata 4.03;
 
 ### Module Initialization ###
 
@@ -111,7 +111,7 @@ sub make_shared
     if (! ref($in) ||
         ! $threads::threads ||
         ! $threads::shared::threads_shared ||
-        threads::shared::_id($in))
+        threads::shared::is_shared($in))
     {
         return ($in);
     }
