@@ -4,7 +4,7 @@ Object::InsideOut - Comprehensive inside-out object support module
 
 =head1 VERSION
 
-This document describes Object::InsideOut version 4.03
+This document describes Object::InsideOut version 4.04
 
 =head1 SYNOPSIS
 
