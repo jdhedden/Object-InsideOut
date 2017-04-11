@@ -3,6 +3,9 @@ Revision history for Perl extension Object::InsideOut.
 -
 	-
 
+4.04 Wed Mar  1 04:59:11 2017
+	- Fix for threads::shared < 0.96
+
 4.03 Sun Feb 26 17:14:40 2017
 	- Update to use threads::shared::is_shared
 

@@ -5,12 +5,12 @@ require 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '4.03';
+our $VERSION = '4.04';
 $VERSION = eval $VERSION;
 
-use Object::InsideOut::Exception 4.03;
-use Object::InsideOut::Util 4.03 qw(create_object hash_re is_it make_shared);
-use Object::InsideOut::Metadata 4.03;
+use Object::InsideOut::Exception 4.04;
+use Object::InsideOut::Util 4.04 qw(create_object hash_re is_it make_shared);
+use Object::InsideOut::Metadata 4.04;
 
 require B;
 
@@ -114,6 +114,10 @@ if (! exists($GBL{'GBL_SET'})) {
         'disinherit'             => {'restricted' => 1},
         'heritage'               => {'restricted' => 1},
     };
+
+    if ($threads::shared::threads_shared && ($threads::shared::VERSION lt '0.96')) {
+        *threads::shared::is_shared = \&threads::shared::_id;
+    }
 }
 
 
