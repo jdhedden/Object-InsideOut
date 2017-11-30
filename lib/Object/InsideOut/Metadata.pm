@@ -311,7 +311,7 @@ This document describes Object::InsideOut::Metadata version 4.04
  # Obtain the class hierarchy from the metadata object
  my @classes = $meta->get_classes();
 
- # Obtain infomation on the parameters for a class's construction
+ # Obtain information on the parameters for a class's construction
  my %args = $meta->get_args();
 
  # Obtain information on a class's methods
