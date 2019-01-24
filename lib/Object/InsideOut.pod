@@ -2668,10 +2668,10 @@ objects, and a flag:
      my ($parent, $clone, $flag) = @_;
 
      # Special object replication processing
-     if ($clone eq 'CLONE') {
+     if ($flag eq 'CLONE') {
         # Handling for thread cloning
         ...
-     } elsif ($clone eq 'deep') {
+     } elsif ($flag eq 'deep') {
         # Deep copy of the parent
         ...
      } else {
